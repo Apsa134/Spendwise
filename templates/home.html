@@ -1,0 +1,585 @@
+
+{% extends 'base.html' %}
+
+{% block title %}SpendWise | Manage Your Money{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+
+            <div class="col-lg-6">
+                <span class="hero-badge">
+                    <i class="bi bi-stars"></i>
+                    Your money, under control
+                </span>
+
+                <h1 class="hero-title">
+                    Take control of your
+                    <span>financial future.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Track your income, manage expenses, set budgets,
+                    and understand your spending — all in one place.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'transaction_list' %}"
+                           class="btn btn-primary btn-lg">
+                            View Transactions
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+
+                        <a href="{% url 'add_transaction' %}"
+                           class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add Transaction
+                        </a>
+                    {% else %}
+                        <a href="{% url 'register' %}"
+                           class="btn btn-primary btn-lg">
+                            Start Tracking Free
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+
+                        <a href="{% url 'login' %}"
+                           class="btn btn-outline-secondary btn-lg">
+                            Login
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="hero-trust mt-4">
+                    <i class="bi bi-shield-check"></i>
+                    Simple, organized, and secure expense tracking
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="dashboard-preview">
+
+                    {% if user.is_authenticated %}
+
+                        <div class="preview-header">
+                            <div>
+                                <p class="preview-label">TOTAL BALANCE</p>
+                                <h2>₹{{ balance|floatformat:2 }}</h2>
+                            </div>
+
+                            <span class="preview-icon">
+                                <i class="bi bi-wallet2"></i>
+                            </span>
+                        </div>
+
+                        <div class="row g-3 mt-2">
+                            <div class="col-6">
+                                <div class="preview-stat income-stat">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-arrow-down-left"></i>
+                                    </div>
+                                    <p>Income</p>
+                                    <h4>₹{{ total_income|floatformat:2 }}</h4>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="preview-stat expense-stat">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-arrow-up-right"></i>
+                                    </div>
+                                    <p>Expenses</p>
+                                    <h4>₹{{ total_expenses|floatformat:2 }}</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-activity mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Recent activity</h5>
+                                <a href="{% url 'transaction_list' %}"
+                                   class="small text-decoration-none">
+                                    View all
+                                </a>
+                            </div>
+
+                            {% for transaction in recent_transactions %}
+                                <div class="activity-item">
+                                    <span class="activity-icon
+                                        {% if transaction.transaction_type == 'income' %}
+                                            salary-icon
+                                        {% elif transaction.category == 'food' %}
+                                            food-icon
+                                        {% elif transaction.category == 'transport' %}
+                                            travel-icon
+                                        {% else %}
+                                            food-icon
+                                        {% endif %}">
+                                        {% if transaction.transaction_type == 'income' %}
+                                            <i class="bi bi-cash-stack"></i>
+                                        {% elif transaction.category == 'food' %}
+                                            <i class="bi bi-cup-hot"></i>
+                                        {% elif transaction.category == 'transport' %}
+                                            <i class="bi bi-bus-front"></i>
+                                        {% else %}
+                                            <i class="bi bi-receipt"></i>
+                                        {% endif %}
+                                    </span>
+
+                                    <div class="flex-grow-1">
+                                        <h6>{{ transaction.title }}</h6>
+                                        <small>
+                                            {{ transaction.date|date:"d M Y" }}
+                                        </small>
+                                    </div>
+
+                                    {% if transaction.transaction_type == 'income' %}
+                                        <strong class="income-amount">
+                                            + ₹{{ transaction.amount|floatformat:2 }}
+                                        </strong>
+                                    {% else %}
+                                        <strong class="expense-amount">
+                                            − ₹{{ transaction.amount|floatformat:2 }}
+                                        </strong>
+                                    {% endif %}
+                                </div>
+                            {% empty %}
+                                <div class="text-center py-4">
+                                    <i class="bi bi-receipt fs-2 text-muted"></i>
+                                    <p class="mt-2 mb-3">
+                                        No transactions yet.
+                                    </p>
+                                    <a href="{% url 'add_transaction' %}"
+                                       class="btn btn-primary btn-sm">
+                                        Add your first transaction
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    {% else %}
+
+                        <div class="preview-header">
+                            <div>
+                                <p class="preview-label">YOUR FINANCES, SIMPLIFIED</p>
+                                <h2>One place. Better control.</h2>
+                            </div>
+
+                            <span class="preview-icon">
+                                <i class="bi bi-wallet2"></i>
+                            </span>
+                        </div>
+
+                        <div class="row g-3 mt-2">
+                            <div class="col-6">
+                                <div class="preview-stat income-stat">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-arrow-down-left"></i>
+                                    </div>
+                                    <p>Track income</p>
+                                    <h4>Every rupee</h4>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="preview-stat expense-stat">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-arrow-up-right"></i>
+                                    </div>
+                                    <p>Track expenses</p>
+                                    <h4>Every purchase</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-activity mt-4">
+                            <h5 class="mb-3">Your financial overview</h5>
+
+                            <div class="activity-item">
+                                <span class="activity-icon food-icon">
+                                    <i class="bi bi-receipt"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <h6>Record transactions</h6>
+                                    <small>Keep your finances organized</small>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <span class="activity-icon travel-icon">
+                                    <i class="bi bi-piggy-bank"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <h6>Manage your budget</h6>
+                                    <small>Build better spending habits</small>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <span class="activity-icon salary-icon">
+                                    <i class="bi bi-bar-chart-line"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <h6>Understand your spending</h6>
+                                    <small>Make informed decisions</small>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+{% if user.is_authenticated %}
+
+<!-- MONTHLY BUDGET ALERTS -->
+<section class="container py-4">
+
+    {% if budget_alerts %}
+        <div class="section-heading mb-4">
+            <span class="section-label">BUDGET TRACKER</span>
+            <h2>Monthly Budget Alerts</h2>
+            <p>Stay on top of your spending limits.</p>
+        </div>
+
+        {% for alert in budget_alerts %}
+
+            {% if alert.status == 'exceeded' %}
+                <!-- RED ALERT: Budget exceeded -->
+                <div class="alert alert-danger d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3"
+                     role="alert">
+
+                    <div>
+                        <h6 class="mb-1">
+                            <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                            {{ alert.category }} budget exceeded!
+                        </h6>
+
+                        <p class="mb-0">
+                            Spent ₹{{ alert.spent|floatformat:2 }}
+                            of ₹{{ alert.budget_amount|floatformat:2 }}.
+                            Overspent by
+                            ₹{{ alert.overspent|floatformat:2 }}.
+                        </p>
+                    </div>
+
+                    <span class="badge bg-danger fs-6">
+                        {{ alert.percentage|floatformat:0 }}% used
+                    </span>
+                </div>
+
+            {% else %}
+                <!-- YELLOW WARNING: Approaching budget limit -->
+                <div class="alert alert-warning d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3"
+                     role="alert">
+
+                    <div>
+                        <h6 class="mb-1">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            {{ alert.category }} budget warning
+                        </h6>
+
+                        <p class="mb-0">
+                            Spent ₹{{ alert.spent|floatformat:2 }}
+                            of ₹{{ alert.budget_amount|floatformat:2 }}.
+                            ₹{{ alert.remaining|floatformat:2 }} remaining.
+                        </p>
+                    </div>
+
+                    <span class="badge bg-warning text-dark fs-6">
+                        {{ alert.percentage|floatformat:0 }}% used
+                    </span>
+                </div>
+            {% endif %}
+
+        {% endfor %}
+
+    {% else %}
+        <!-- No warnings -->
+        <div class="feature-card mb-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="feature-icon green-feature">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+
+                <div>
+                    <h6 class="mb-1">Your budgets are on track</h6>
+                    <p class="text-muted mb-0">
+                        No budget warnings right now. Keep monitoring your spending!
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</section>
+
+
+<!-- MONTHLY FINANCIAL OVERVIEW -->
+<section class="features-section">
+    <div class="container py-4">
+
+        <div class="section-heading">
+            <span class="section-label">YOUR ANALYTICS</span>
+            <h2>Monthly Financial Overview</h2>
+            <p>Here is how your money is moving this month.</p>
+        </div>
+
+        <div class="row g-4 mt-3">
+
+            <div class="col-md-4">
+                <div class="feature-card h-100">
+                    <div class="feature-icon green-feature">
+                        <i class="bi bi-arrow-down-left"></i>
+                    </div>
+                    <h6>This Month's Income</h6>
+                    <h4>₹{{ monthly_income|floatformat:2 }}</h4>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card h-100">
+                    <div class="feature-icon orange-feature">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </div>
+                    <h6>This Month's Expenses</h6>
+                    <h4>₹{{ monthly_expenses|floatformat:2 }}</h4>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card h-100">
+                    <div class="feature-icon blue-feature">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <h6>This Month's Savings</h6>
+                    <h4>₹{{ monthly_savings|floatformat:2 }}</h4>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CHARTS -->
+        <div class="row g-4 mt-3">
+
+            <div class="col-lg-6">
+                <div class="feature-card h-100">
+                    <h5>Expenses by Category</h5>
+
+                    <div style="max-width: 380px; margin: 20px auto;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+
+                    {% if not category_chart_values %}
+                        <p class="text-muted text-center">
+                            No expenses recorded this month yet.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="feature-card h-100">
+                    <h5>Income vs Expenses</h5>
+
+                    <div style="margin-top: 20px;">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- CHART DATA -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{ category_chart_labels|json_script:"category-labels-data" }}
+{{ category_chart_values|json_script:"category-values-data" }}
+{{ monthly_chart_labels|json_script:"month-labels-data" }}
+{{ monthly_income_values|json_script:"income-values-data" }}
+{{ monthly_expense_values|json_script:"expense-values-data" }}
+
+<script>
+    const categoryLabels = JSON.parse(
+        document.getElementById('category-labels-data').textContent
+    );
+
+    const categoryValues = JSON.parse(
+        document.getElementById('category-values-data').textContent
+    );
+
+    const monthLabels = JSON.parse(
+        document.getElementById('month-labels-data').textContent
+    );
+
+    const incomeValues = JSON.parse(
+        document.getElementById('income-values-data').textContent
+    );
+
+    const expenseValues = JSON.parse(
+        document.getElementById('expense-values-data').textContent
+    );
+
+    if (categoryLabels.length > 0) {
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    label: 'Expenses',
+                    data: categoryValues
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    new Chart(document.getElementById('monthlyChart'), {
+        type: 'bar',
+        data: {
+            labels: monthLabels,
+            datasets: [
+                {
+                    label: 'Income',
+                    data: incomeValues
+                },
+                {
+                    label: 'Expenses',
+                    data: expenseValues
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endif %}
+
+
+<!-- FEATURES SECTION -->
+<section class="features-section">
+    <div class="container">
+
+        <div class="section-heading text-center">
+            <span class="section-label">WHAT YOU CAN DO</span>
+            <h2>Everything your finances need</h2>
+            <p>
+                The tools to build better money habits, one day at a time.
+            </p>
+        </div>
+
+        <div class="row g-4 mt-3">
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon green-feature">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                    <h5>Track Transactions</h5>
+                    <p>
+                        Record income and expenses and keep your
+                        financial activity organized.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon purple-feature">
+                        <i class="bi bi-piggy-bank"></i>
+                    </div>
+                    <h5>Set Budgets</h5>
+                    <p>
+                        Set spending limits and keep track of
+                        your budget for each category.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon orange-feature">
+                        <i class="bi bi-bar-chart-line"></i>
+                    </div>
+                    <h5>View Reports</h5>
+                    <p>
+                        Understand where your money goes with
+                        clear summaries and spending insights.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon blue-feature">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <h5>Private Account</h5>
+                    <p>
+                        Keep your personal transactions separate
+                        from those of other users.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- CALL TO ACTION -->
+<section class="cta-section">
+    <div class="container">
+
+        <div class="cta-content text-center">
+            <h2>Ready to spend smarter?</h2>
+            <p>
+                Start organizing your finances and make every
+                rupee count.
+            </p>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'add_transaction' %}"
+                   class="btn btn-light btn-lg">
+                    Add a Transaction
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            {% else %}
+                <a href="{% url 'register' %}"
+                   class="btn btn-light btn-lg">
+                    Create Your Account
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

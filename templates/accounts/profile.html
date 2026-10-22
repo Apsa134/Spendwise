@@ -1,0 +1,24 @@
+
+{% extends 'base.html' %}
+
+{% block title %}My Profile | SpendWise{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <h2 class="mb-4">My Profile</h2>
+
+            <p><strong>Username:</strong> {{ profile_user.username }}</p>
+            <p><strong>First name:</strong> {{ profile_user.first_name|default:"Not provided" }}</p>
+            <p><strong>Last name:</strong> {{ profile_user.last_name|default:"Not provided" }}</p>
+            <p><strong>Email:</strong> {{ profile_user.email|default:"Not provided" }}</p>
+            <p><strong>Member since:</strong> {{ profile_user.date_joined|date:"d M Y" }}</p>
+
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

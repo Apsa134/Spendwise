@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | SpendWise{% endblock %}
+
+{% block content %}
+
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-layout">
+
+            <div class="auth-intro">
+                <span class="section-label">WELCOME BACK</span>
+
+                <h1>Your finances,<br>
+                    <span>all in one place.</span>
+                </h1>
+
+                <p>
+                    Log in to review your transactions, monitor your
+                    budgets, and stay on top of your money.
+                </p>
+
+                <div class="auth-benefit">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Your personal finance dashboard
+                </div>
+
+                <div class="auth-benefit">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Organized income and expense tracking
+                </div>
+
+                <div class="auth-benefit">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Budget planning and reports
+                </div>
+            </div>
+
+            <div class="auth-card">
+                <div class="auth-card-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+
+                <h2>Welcome back!</h2>
+                <p class="auth-subtitle">
+                    Enter your details to access your account.
+                </p>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">
+                            Username
+                        </label>
+
+                        <input type="text"
+                               name="username"
+                               id="id_username"
+                               class="form-control"
+                               placeholder="Enter your username"
+                               autocomplete="username"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">
+                            Password
+                        </label>
+
+                        <div class="password-wrapper">
+                            <input type="password"
+                                name="password"
+                                id="id_password"
+                                class="form-control"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required>
+
+                            <button type="button"
+                                    class="password-toggle"
+                                    onclick="togglePassword('id_password', this)"
+                                    aria-label="Show password"
+                                    aria-pressed="false">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary w-100 auth-submit">
+                        Login
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </form>
+
+                <p class="auth-switch">
+                    Don't have an account?
+                    <a href="{% url 'register' %}">Create one</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

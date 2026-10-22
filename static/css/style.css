@@ -1,0 +1,956 @@
+/* =========================================
+   SPENDWISE - GLOBAL STYLES
+========================================= */
+:root {
+    --sw-primary: #087f5b;
+    --sw-primary-dark: #066749;
+    --sw-primary-light: #e8f6ef;
+    --sw-heading: #152b25;
+    --sw-text: #64746d;
+    --sw-background: #f7faf8;
+    --sw-border: #e5ece8;
+    --sw-white: #ffffff;
+}
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    background: var(--sw-white);
+    color: var(--sw-text);
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
+}
+a {
+    text-decoration: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--sw-heading);
+    font-weight: 700;
+}
+p {
+    color: var(--sw-text);
+}
+main {
+    min-height: 70vh;
+}
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.btn-primary {
+    background: var(--sw-primary);
+    border-color: var(--sw-primary);
+}
+.btn-primary:hover {
+    background: var(--sw-primary-dark);
+    border-color: var(--sw-primary-dark);
+    transform: translateY(-1px);
+}
+.btn-lg {
+    padding: 13px 22px;
+    font-size: 15px;
+}
+/* =========================================
+   NAVBAR
+========================================= */
+.sw-navbar {
+    background: #102c23;
+    padding: 17px 0;
+}
+.navbar-brand {
+    color: var(--sw-white);
+    font-size: 23px;
+    letter-spacing: -0.6px;
+}
+.navbar-brand:hover {
+    color: var(--sw-white);
+}
+.brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 7px;
+    border-radius: 10px;
+    background: var(--sw-primary);
+    color: white;
+}
+.sw-navbar .nav-link {
+    padding: 9px 14px;
+    color: #d7e4dd;
+    font-weight: 500;
+}
+.sw-navbar .nav-link:hover {
+    color: white;
+}
+.nav-register {
+    padding: 9px 18px;
+    background: #0c9b6d;
+    border: none;
+    color: white;
+}
+.nav-register:hover {
+    background: #087f5b;
+    color: white;
+}
+.nav-logout {
+    border-radius: 9px;
+    padding: 7px 15px;
+}
+/* =========================================
+   HOME HERO
+========================================= */
+.hero-section {
+    position: relative;
+    overflow: hidden;
+    padding: 90px 0 100px;
+    background:
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(8, 127, 91, 0.09),
+            transparent 30%
+        ),
+        linear-gradient(180deg, #f8fcf9 0%, #ffffff 100%);
+}
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 13px;
+    border: 1px solid #d6eee2;
+    border-radius: 30px;
+    background: #edf8f2;
+    color: var(--sw-primary);
+    font-size: 13px;
+    font-weight: 700;
+}
+.hero-title {
+    max-width: 570px;
+    margin: 24px 0 18px;
+    font-size: clamp(38px, 5vw, 58px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.12;
+}
+.hero-title span {
+    color: var(--sw-primary);
+}
+.hero-description {
+    max-width: 500px;
+    font-size: 17px;
+    line-height: 1.8;
+}
+.hero-trust {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c7d74;
+    font-size: 13px;
+}
+.hero-trust i {
+    color: var(--sw-primary);
+    font-size: 17px;
+}
+/* =========================================
+   DASHBOARD PREVIEW
+========================================= */
+.dashboard-preview {
+    padding: 27px;
+    border: 1px solid #e5eee8;
+    border-radius: 22px;
+    background: white;
+    box-shadow: 0 24px 65px rgba(20, 54, 40, 0.10);
+}
+.preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.preview-label {
+    margin-bottom: 5px;
+    color: #87958d;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+.preview-header h2 {
+    margin: 0;
+    font-size: 32px;
+    letter-spacing: -1px;
+}
+.preview-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background: var(--sw-primary-light);
+    color: var(--sw-primary);
+    font-size: 24px;
+}
+.preview-stat {
+    height: 100%;
+    padding: 17px;
+    border-radius: 14px;
+}
+.income-stat {
+    background: #eff9f2;
+}
+.expense-stat {
+    background: #fff4ef;
+}
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: white;
+    color: var(--sw-primary);
+}
+.expense-stat .stat-icon {
+    color: #df754b;
+}
+.preview-stat p {
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+.preview-stat h4 {
+    margin: 0;
+    font-size: 20px;
+}
+.preview-activity h5 {
+    font-size: 16px;
+}
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf1ee;
+}
+.activity-item:last-child {
+    border-bottom: none;
+}
+.activity-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    font-size: 18px;
+}
+.food-icon {
+    background: #fff1e8;
+    color: #db814d;
+}
+.travel-icon {
+    background: #edf2ff;
+    color: #5879d8;
+}
+.salary-icon {
+    background: #e9f8ee;
+    color: var(--sw-primary);
+}
+.activity-item h6 {
+    margin: 0 0 2px;
+    font-size: 13px;
+}
+.activity-item small {
+    color: #929e97;
+    font-size: 11px;
+}
+.activity-item strong {
+    margin-left: auto;
+    white-space: nowrap;
+    font-size: 12px;
+}
+.expense-amount {
+    color: #d96f4b;
+}
+.income-amount {
+    color: var(--sw-primary);
+}
+/* =========================================
+   FEATURES
+========================================= */
+.features-section {
+    padding: 85px 0;
+    background: white;
+}
+.section-heading {
+    max-width: 650px;
+    margin: 0 auto;
+}
+.section-label {
+    color: var(--sw-primary);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+.section-heading h2 {
+    margin: 12px 0;
+    font-size: clamp(28px, 4vw, 38px);
+    letter-spacing: -1px;
+}
+.section-heading p {
+    margin-bottom: 0;
+}
+.feature-card {
+    height: 100%;
+    padding: 27px 23px;
+    border: 1px solid var(--sw-border);
+    border-radius: 17px;
+    background: white;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(19, 57, 40, 0.08);
+}
+.feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 49px;
+    height: 49px;
+    margin-bottom: 22px;
+    border-radius: 14px;
+    font-size: 23px;
+}
+.green-feature {
+    background: #e9f8ee;
+    color: #087f5b;
+}
+.purple-feature {
+    background: #f1eaff;
+    color: #805ad5;
+}
+.orange-feature {
+    background: #fff0e4;
+    color: #dc7d35;
+}
+.blue-feature {
+    background: #e9f2ff;
+    color: #4078cf;
+}
+.feature-card h5 {
+    margin-bottom: 10px;
+    font-size: 17px;
+}
+.feature-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.8;
+}
+/* =========================================
+   CALL TO ACTION
+========================================= */
+.cta-section {
+    padding: 70px 0;
+    background: var(--sw-background);
+}
+.cta-content {
+    padding: 55px 25px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #087f5b, #075b44);
+}
+.cta-content h2 {
+    color: white;
+    font-size: clamp(28px, 4vw, 40px);
+}
+.cta-content p {
+    max-width: 520px;
+    margin: 15px auto 25px;
+    color: #d8eee4;
+}
+.cta-content .btn-light {
+    color: var(--sw-primary-dark);
+}
+/* =========================================
+   LOGIN AND REGISTER
+========================================= */
+.auth-section {
+    min-height: 80vh;
+    padding: 75px 0;
+    background:
+        radial-gradient(
+            circle at 10% 20%,
+            rgba(8, 127, 91, 0.08),
+            transparent 30%
+        ),
+        #f8fbf9;
+}
+.auth-layout {
+    display: grid;
+    grid-template-columns: 1fr 0.85fr;
+    align-items: center;
+    gap: 75px;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+.auth-intro h1 {
+    margin: 18px 0;
+    font-size: clamp(36px, 4.5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.15;
+}
+.auth-intro h1 span {
+    color: var(--sw-primary);
+}
+.auth-intro > p {
+    max-width: 440px;
+    margin-bottom: 28px;
+    font-size: 16px;
+    line-height: 1.8;
+}
+.auth-benefit {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 14px 0;
+    color: #41574b;
+    font-size: 14px;
+}
+.auth-benefit i {
+    color: var(--sw-primary);
+    font-size: 18px;
+}
+.auth-card {
+    padding: 34px;
+    border: 1px solid #e6eee9;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 18px 55px rgba(21, 54, 39, 0.08);
+}
+.auth-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    background: var(--sw-primary-light);
+    color: var(--sw-primary);
+    font-size: 22px;
+}
+.auth-card h2 {
+    margin-bottom: 7px;
+    font-size: 27px;
+    letter-spacing: -0.5px;
+}
+.auth-subtitle {
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+.auth-card .form-label {
+    margin-bottom: 7px;
+    color: #334b3e;
+    font-size: 13px;
+    font-weight: 700;
+}
+.auth-card .form-control {
+    min-height: 47px;
+    padding: 11px 13px;
+    border: 1px solid #dce6df;
+    border-radius: 9px;
+    background: #fff;
+    font-size: 14px;
+}
+.auth-card .form-control:focus {
+    border-color: var(--sw-primary);
+    box-shadow: 0 0 0 3px rgba(8, 127, 91, 0.10);
+}
+.auth-card .form-control::placeholder {
+    color: #a0aaa4;
+}
+.auth-submit {
+    min-height: 48px;
+    margin-top: 10px;
+}
+.auth-switch {
+    margin: 23px 0 0;
+    text-align: center;
+    font-size: 13px;
+}
+.auth-switch a {
+    color: var(--sw-primary);
+    font-weight: 700;
+}
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+.form-help {
+    margin-top: 7px;
+    color: #7b8981;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+.form-help ul {
+    padding-left: 18px;
+    margin-bottom: 0;
+}
+.field-error {
+    margin-top: 5px;
+    color: #c0392b;
+    font-size: 12px;
+}
+.auth-card .alert {
+    font-size: 13px;
+}
+/* =========================================
+   FOOTER
+========================================= */
+.sw-footer {
+    padding: 24px 0;
+    border-top: 1px solid #e9efeb;
+    background: white;
+}
+.sw-footer p {
+    color: #849188;
+    font-size: 12px;
+}
+/* =========================================
+   TRANSACTION AND BUDGET PAGES
+========================================= */
+.transaction-form-card {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 35px;
+    border: 1px solid var(--sw-border);
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 18px 50px rgba(21, 54, 39, 0.07);
+}
+.transaction-form-card h1,
+.transaction-list-section h1 {
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+.transaction-table-card {
+    overflow: hidden;
+    border: 1px solid var(--sw-border);
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 10px 35px rgba(21, 54, 39, 0.04);
+}
+.transaction-table-card .table thead th {
+    padding: 17px 20px;
+    background: #f4f8f5;
+    color: #617268;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+.transaction-table-card .table tbody td {
+    padding: 17px 20px;
+    border-color: #edf1ee;
+    color: #405248;
+    font-size: 13px;
+}
+.transaction-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.income-badge {
+    background: #e8f7ed;
+    color: #087f5b;
+}
+.expense-badge {
+    background: #fff0e9;
+    color: #c65d39;
+}
+.empty-transactions {
+    padding: 65px 20px;
+}
+.empty-transactions > i {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: #8aab99;
+    font-size: 45px;
+}
+.empty-transactions h4 {
+    font-size: 20px;
+}
+.empty-transactions p {
+    margin: 10px 0 22px;
+}
+/* =========================================
+   PASSWORD VISIBILITY TOGGLE
+========================================= */
+.password-wrapper {
+    position: relative;
+}
+.password-wrapper .form-control {
+    padding-right: 48px;
+}
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #718078;
+    cursor: pointer;
+    font-size: 18px;
+}
+.password-toggle:hover {
+    color: var(--sw-primary);
+}
+.password-toggle:focus-visible {
+    outline: 2px solid var(--sw-primary);
+    outline-offset: 2px;
+    border-radius: 5px;
+}
+/* =========================================
+   EDIT AND DELETE ACTION BUTTONS
+   Works on Transactions and Budgets pages
+========================================= */
+/* Common styles */
+.transaction-table-card .transaction-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+/* Green Edit button */
+.transaction-table-card .transaction-action-btn.edit-action {
+    background-color: #edf8f1 !important;
+    color: #16794b !important;
+    border: 1px solid #c8e8d2 !important;
+}
+.transaction-table-card .transaction-action-btn.edit-action:hover {
+    background-color: #16794b !important;
+    color: #ffffff !important;
+    border-color: #16794b !important;
+}
+/* Red Delete button */
+.transaction-table-card .transaction-action-btn.delete-action {
+    background-color: #fff0f0 !important;
+    color: #c62828 !important;
+    border: 1px solid #f3cccc !important;
+}
+.transaction-table-card .transaction-action-btn.delete-action:hover {
+    background-color: #c62828 !important;
+    color: #ffffff !important;
+    border-color: #c62828 !important;
+}
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+@media (max-width: 991px) {
+    .hero-section {
+        padding: 65px 0;
+    }
+    .auth-layout {
+        grid-template-columns: 1fr;
+        gap: 35px;
+        max-width: 550px;
+    }
+    .auth-intro h1 {
+        font-size: 40px;
+    }
+    .auth-intro > p {
+        max-width: 100%;
+    }
+    .auth-benefit {
+        margin: 10px 0;
+    }
+}
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 48px 0;
+    }
+    .hero-title {
+        font-size: 39px;
+        letter-spacing: -1.4px;
+    }
+    .hero-description {
+        font-size: 15px;
+    }
+    .dashboard-preview {
+        padding: 18px;
+    }
+    .preview-header h2 {
+        font-size: 27px;
+    }
+    .preview-stat {
+        padding: 12px;
+    }
+    .preview-stat h4 {
+        font-size: 17px;
+    }
+    .features-section {
+        padding: 60px 0;
+    }
+    .cta-content {
+        padding: 40px 20px;
+    }
+    .auth-section {
+        padding: 45px 0;
+    }
+    .auth-card {
+        padding: 24px 20px;
+    }
+    .auth-intro h1 {
+        font-size: 36px;
+    }
+    .sw-footer {
+        text-align: center;
+    }
+    .transaction-form-card {
+        padding: 23px 18px;
+    }
+    .transaction-table-card .table thead th,
+    .transaction-table-card .table tbody td {
+        padding: 13px 12px;
+    }
+    .transaction-table-card .transaction-action-btn {
+        gap: 5px;
+        padding: 7px 9px;
+        font-size: 12px;
+    }
+}
+/* Budget action buttons */
+.budget-action-btn,
+.transaction-table-card .budget-action-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+/* Green Edit */
+.budget-edit-btn,
+.budget-edit-btn:visited {
+    background-color: #edf8f1 !important;
+    color: #16794b !important;
+    border: 1px solid #c8e8d2 !important;
+}
+.budget-edit-btn:hover {
+    background-color: #16794b !important;
+    color: #ffffff !important;
+    border-color: #16794b !important;
+}
+/* Red Delete */
+.budget-delete-btn,
+.budget-delete-btn:visited {
+    background-color: #fff0f0 !important;
+    color: #c62828 !important;
+    border: 1px solid #f3cccc !important;
+}
+.budget-delete-btn:hover {
+    background-color: #c62828 !important;
+    color: #ffffff !important;
+    border-color: #c62828 !important;
+}
+
+/* ===== Password Change Page ===== */
+
+.password-page {
+    min-height: 75vh;
+    padding: 60px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-color, #f5f7fb);
+}
+
+.password-wrapper {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.password-heading {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.password-icon {
+    width: 66px;
+    height: 66px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    font-size: 29px;
+}
+
+.password-heading h1 {
+    margin: 0 0 10px;
+    font-size: clamp(26px, 4vw, 34px);
+    font-weight: 750;
+    color: var(--text-color, #172033);
+}
+
+.password-heading p {
+    margin: 0;
+    line-height: 1.7;
+    color: var(--muted-color, #6b7280);
+    font-size: 15px;
+}
+
+.password-card {
+    padding: 32px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 20px;
+    background: var(--card-bg, #ffffff);
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07);
+}
+
+.password-field {
+    margin-bottom: 22px;
+}
+
+.password-field label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--text-color, #374151);
+}
+
+.password-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 10px;
+    background: var(--input-bg, #ffffff);
+    color: var(--text-color, #172033);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.password-field input:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.13);
+}
+
+.password-help {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted-color, #6b7280);
+}
+
+.password-help ul {
+    padding-left: 20px;
+    margin: 6px 0 0;
+}
+
+.password-error {
+    margin-top: 7px;
+    color: #dc2626;
+    font-size: 13px;
+}
+
+.password-error ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.password-submit {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 13px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #059669;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.password-submit:hover {
+    background: #047857;
+    transform: translateY(-1px);
+}
+
+.password-cancel {
+    display: block;
+    margin-top: 18px;
+    text-align: center;
+    color: var(--muted-color, #6b7280);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.password-cancel:hover {
+    color: #059669;
+}
+
+.password-security-note {
+    margin-top: 22px;
+    text-align: center;
+    color: var(--muted-color, #6b7280);
+    font-size: 13px;
+}
+
+.password-security-note i {
+    color: #059669;
+    margin-right: 5px;
+}
+
+@media (max-width: 480px) {
+    .password-page {
+        padding: 35px 16px;
+    }
+
+    .password-card {
+        padding: 24px 20px;
+    }
+}

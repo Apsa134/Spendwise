@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}My Transactions | SpendWise{% endblock %}
+
+{% block content %}
+
+<section class="transaction-list-section">
+    <div class="container py-5">
+
+        <div class="d-flex flex-wrap justify-content-between
+                    align-items-center gap-3 mb-4">
+            <div>
+                <span class="section-label">MONEY MANAGEMENT</span>
+                <h1 class="mt-2">My Transactions</h1>
+                <p class="mb-0">
+                    Review your recorded income and expenses.
+                </p>
+            </div>
+
+            <a href="{% url 'add_transaction' %}"
+               class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>
+                Add Transaction
+            </a>
+        </div>
+
+        <div class="transaction-table-card">
+            {% if transactions %}
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Transaction</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th class="text-end">Amount</th>    
+                                <th class="text-center actions-column">Actions</th>
+
+                                
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ transaction.title }}</strong>
+
+                                        {% if transaction.description %}
+                                            <div class="small text-muted">
+                                                {{ transaction.description|truncatechars:55 }}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>{{ transaction.get_category_display }}</td>
+
+                                    <td>{{ transaction.date|date:"d M Y" }}</td>
+
+                                    <td>
+                                        {% if transaction.transaction_type == 'income' %}
+                                            <span class="transaction-badge income-badge">
+                                                Income
+                                            </span>
+                                        {% else %}
+                                            <span class="transaction-badge expense-badge">
+                                                Expense
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="text-end fw-bold">
+                                        {% if transaction.transaction_type == 'income' %}
+                                            <span class="income-amount">
+                                                + ₹{{ transaction.amount|floatformat:2 }}
+                                            </span>
+                                        {% else %}
+                                            <span class="expense-amount">
+                                                − ₹{{ transaction.amount|floatformat:2 }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                                                    
+                                    <td class="text-center">
+                                        <div class="transaction-actions">
+                                            <a href="{% url 'edit_transaction' transaction.pk %}"
+                                            class="transaction-action-btn edit-action"
+                                            title="Edit transaction">
+                                                <i class="bi bi-pencil-square"></i>
+                                                <span>Edit</span>
+                                            </a>
+
+                                            <a href="{% url 'delete_transaction' transaction.pk %}"
+                                            class="transaction-action-btn delete-action"
+                                            title="Delete transaction">
+                                                <i class="bi bi-trash"></i>
+                                                <span>Delete</span>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                </tr>
+                                
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-transactions text-center">
+                    <i class="bi bi-receipt"></i>
+                    <h4>No transactions yet</h4>
+                    <p>Add your first income or expense to get started.</p>
+
+                    <a href="{% url 'add_transaction' %}"
+                       class="btn btn-primary">
+                        Add Your First Transaction
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

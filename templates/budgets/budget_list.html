@@ -1,0 +1,237 @@
+
+{% extends 'base.html' %}
+
+{% block title %}My Budgets | SpendWise{% endblock %}
+
+{% block content %}
+<section class="transaction-list-section">
+    <div class="container py-5">
+
+        <!-- Page heading -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <span class="section-label">MONEY MANAGEMENT</span>
+                <h1 class="mt-2">Monthly Budgets</h1>
+                <p class="mb-0">
+                    {{ month_name }} {{ selected_year }} — track your spending.
+                </p>
+            </div>
+
+            <a href="{% url 'add_budget' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>
+                Add Budget
+            </a>
+        </div>
+
+        <!-- Month and year filter -->
+        <form method="get" class="d-flex flex-wrap gap-2 mb-4">
+            <select name="month" class="form-select" style="max-width: 180px;">
+                {% for number, name in month_choices %}
+                    <option value="{{ number }}"
+                        {% if number == selected_month %}selected{% endif %}>
+                        {{ name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <input
+                type="number"
+                name="year"
+                class="form-control"
+                style="max-width: 120px;"
+                value="{{ selected_year }}"
+                min="2000"
+                max="2100"
+            >
+
+            <button type="submit" class="btn btn-outline-success">
+                View Month
+            </button>
+        </form>
+
+        <!-- Monthly expense chart -->
+        <div class="transaction-table-card p-4 mb-4">
+            <h4 class="mb-1">Monthly Expenses</h4>
+            <p class="text-muted small mb-4">
+                Expense distribution by category
+            </p>
+
+            {% if chart_labels %}
+                <div style="max-width: 450px; margin: 0 auto;">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            {% else %}
+                <div class="empty-transactions text-center">
+                    <i class="bi bi-pie-chart"></i>
+                    <h4>No expenses recorded</h4>
+                    <p>
+                        No expenses recorded for
+                        {{ month_name }} {{ selected_year }}.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Individual budget cards -->
+        <h3 class="mb-3">Your Category Budgets</h3>
+
+        {% if budget_details %}
+            <div class="row g-4">
+                {% for item in budget_details %}
+                    <div class="col-md-6">
+                        <div class="transaction-table-card p-4 h-100">
+
+                            <!-- Category and budget limit -->
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="mb-1">
+                                        {{ item.budget.get_category_display }}
+                                    </h5>
+
+                                    <span class="text-muted small">
+                                        {{ item.budget.get_month_display }}
+                                        {{ item.budget.year }}
+                                    </span>
+                                </div>
+
+                                <span class="fw-bold">
+                                    ₹{{ item.budget.amount|floatformat:2 }}
+                                </span>
+                            </div>
+
+                            <!-- Amount spent -->
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span>
+                                    Spent: ₹{{ item.spent|floatformat:2 }}
+                                </span>
+
+                                <span>
+                                    {{ item.actual_percentage|floatformat:1 }}% used
+                                </span>
+                            </div>
+
+                            <!-- Spending progress -->
+                            <div class="progress mb-3" style="height: 9px;">
+                                <div
+                                    class="progress-bar {% if item.exceeded %}bg-danger{% elif item.actual_percentage >= 80 %}bg-warning{% else %}bg-success{% endif %}"
+                                    role="progressbar"
+                                    data-progress="{{ item.percentage }}"
+                                    aria-valuenow="{{ item.percentage }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100">
+                                </div>
+                            </div>
+
+                            <!-- Remaining amount -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">
+                                    {% if item.exceeded %}
+                                        Over budget
+                                    {% else %}
+                                        Remaining
+                                    {% endif %}
+                                </span>
+
+                                <strong class="{% if item.exceeded %}text-danger{% else %}text-success{% endif %}">
+                                    ₹{{ item.remaining|floatformat:2 }}
+                                </strong>
+                            </div>
+
+                            <!-- Edit and Delete actions -->
+           
+                            <div class="d-flex justify-content-end gap-2 mt-3">
+                                <a href="{% url 'edit_budget' item.budget.pk %}"
+                                class="budget-action-btn budget-edit-btn"
+                                title="Edit budget">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span>Edit</span>
+                                </a>
+
+                                <a href="{% url 'delete_budget' item.budget.pk %}"
+                                class="budget-action-btn budget-delete-btn"
+                                title="Delete budget">
+                                    <i class="bi bi-trash"></i>
+                                    <span>Delete</span>
+                                </a>
+                            </div>
+
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="transaction-table-card">
+                <div class="empty-transactions text-center">
+                    <i class="bi bi-wallet2"></i>
+                    <h4>No budgets for this month</h4>
+                    <p>
+                        Add a budget to start tracking your category limits.
+                    </p>
+
+                    <a href="{% url 'add_budget' %}" class="btn btn-primary">
+                        Create Budget
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<!-- Monthly expense pie chart -->
+{% if chart_labels %}
+    {{ chart_labels|json_script:"expense-labels" }}
+    {{ chart_values|json_script:"expense-values" }}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const labels = JSON.parse(
+            document.getElementById('expense-labels').textContent
+        );
+
+        const values = JSON.parse(
+            document.getElementById('expense-values').textContent
+        );
+
+        new Chart(document.getElementById('expenseChart'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Monthly Expenses',
+                    data: values,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ₹' +
+                                    Number(context.raw).toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+{% endif %}
+
+<!-- Set progress-bar widths -->
+<script>
+    document.querySelectorAll('[data-progress]').forEach(function(bar) {
+        const percentage = Number(bar.dataset.progress);
+        bar.style.width = percentage + '%';
+    });
+</script>
+
+{% endblock %}
