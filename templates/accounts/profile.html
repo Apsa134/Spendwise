@@ -4,21 +4,124 @@
 {% block title %}My Profile | SpendWise{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
-        <div class="card-body p-4">
-            <h2 class="mb-4">My Profile</h2>
+<div class="profile-page">
+    <div class="container py-5">
 
-            <p><strong>Username:</strong> {{ profile_user.username }}</p>
-            <p><strong>First name:</strong> {{ profile_user.first_name|default:"Not provided" }}</p>
-            <p><strong>Last name:</strong> {{ profile_user.last_name|default:"Not provided" }}</p>
-            <p><strong>Email:</strong> {{ profile_user.email|default:"Not provided" }}</p>
-            <p><strong>Member since:</strong> {{ profile_user.date_joined|date:"d M Y" }}</p>
-
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
-                Back to Home
-            </a>
+        <!-- Page Heading -->
+        <div class="profile-heading mb-4">
+            <div>
+                <span class="profile-eyebrow">ACCOUNT SETTINGS</span>
+                <h2 class="profile-title">My Profile</h2>
+                <p class="profile-subtitle">
+                    View your personal information and manage your account.
+                </p>
+            </div>
         </div>
+
+        <!-- Profile Card -->
+        <div class="profile-card mx-auto">
+
+            <!-- Green Profile Header -->
+            <div class="profile-card-header">
+                <div class="profile-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+
+                <h3>{{ profile_user.get_full_name|default:profile_user.username }}</h3>
+                <p>{{ profile_user.email|default:"No email added yet" }}</p>
+
+                <span class="profile-status">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Active Account
+                </span>
+            </div>
+
+            <!-- Profile Information -->
+            <div class="profile-card-body">
+                <h5 class="section-heading">
+                    <i class="bi bi-person-lines-fill"></i>
+                    Personal Information
+                </h5>
+
+                <div class="profile-info-list">
+
+                    <div class="profile-info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="info-content">
+                            <span>Username</span>
+                            <strong>{{ profile_user.username }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-card-text"></i>
+                        </div>
+                        <div class="info-content">
+                            <span>First Name</span>
+                            <strong>{{ profile_user.first_name|default:"Not provided" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-card-text"></i>
+                        </div>
+                        <div class="info-content">
+                            <span>Last Name</span>
+                            <strong>{{ profile_user.last_name|default:"Not provided" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <span>Email Address</span>
+                            <strong>{{ profile_user.email|default:"Not provided" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <div class="info-content">
+                            <span>Member Since</span>
+                            <strong>{{ profile_user.date_joined|date:"d M Y" }}</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Actions -->
+                <div class="profile-actions">
+                    <a href="{% url 'profile_edit' %}" class="btn profile-edit-btn">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Profile
+                    </a>
+
+                    <a href="{% url 'password_change' %}" class="btn profile-password-btn">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        Change Password
+                    </a>
+
+                    <a href="{% url 'home' %}" class="profile-back-link">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <p class="profile-footer-note">
+            <i class="bi bi-shield-check me-1"></i>
+            Your financial journey, managed securely with SpendWise.
+        </p>
+
     </div>
 </div>
 {% endblock %}

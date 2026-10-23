@@ -1,54 +1,122 @@
 
 {% extends 'base.html' %}
 
+{% block title %}Edit Profile | SpendWise{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2>Edit Profile</h2>
+<div class="edit-profile-page">
+    <div class="edit-profile-container">
 
-    <form method="POST">
-        {% csrf_token %}
+        <!-- Page Heading -->
+        <div class="edit-profile-heading">
+            <span class="edit-profile-eyebrow">
+                <i class="bi bi-person-gear"></i> ACCOUNT SETTINGS
+            </span>
 
-        <div class="mb-3">
-            <label for="first_name" class="form-label">First Name</label>
-            <input
-                type="text"
-                id="first_name"
-                name="first_name"
-                class="form-control"
-                value="{{ profile_user.first_name }}"
-            >
+            <h1>Edit Your Profile</h1>
+            <p>Keep your personal information up to date.</p>
         </div>
 
-        <div class="mb-3">
-            <label for="last_name" class="form-label">Last Name</label>
-            <input
-                type="text"
-                id="last_name"
-                name="last_name"
-                class="form-control"
-                value="{{ profile_user.last_name }}"
-            >
+        <!-- Edit Profile Card -->
+        <div class="edit-profile-card">
+
+            <div class="edit-profile-card-header">
+                <div class="edit-profile-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+
+                <div>
+                    <h5>Personal Information</h5>
+                    <p>Update your details below</p>
+                </div>
+            </div>
+
+            <div class="edit-profile-card-body">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="edit-profile-field">
+                        <label for="first_name" class="form-label">
+                            First Name
+                        </label>
+
+                        <div class="edit-profile-input">
+                            <i class="bi bi-person"></i>
+                            <input
+                                type="text"
+                                id="first_name"
+                                name="first_name"
+                                class="form-control"
+                                placeholder="Enter your first name"
+                                value="{{ profile_user.first_name }}"
+                                autocomplete="given-name"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="edit-profile-field">
+                        <label for="last_name" class="form-label">
+                            Last Name
+                        </label>
+
+                        <div class="edit-profile-input">
+                            <i class="bi bi-person"></i>
+                            <input
+                                type="text"
+                                id="last_name"
+                                name="last_name"
+                                class="form-control"
+                                placeholder="Enter your last name"
+                                value="{{ profile_user.last_name }}"
+                                autocomplete="family-name"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="edit-profile-field">
+                        <label for="email" class="form-label">
+                            Email Address
+                        </label>
+
+                        <div class="edit-profile-input">
+                            <i class="bi bi-envelope"></i>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-control"
+                                placeholder="Enter your email address"
+                                value="{{ profile_user.email }}"
+                                autocomplete="email"
+                                required
+                            >
+                        </div>
+                        <small class="edit-profile-help">
+                            <i class="bi bi-info-circle"></i>
+                            Make sure you enter a valid email address.
+                        </small>
+                    </div>
+
+                    <div class="edit-profile-actions">
+                        <button type="submit" class="edit-profile-save-btn">
+                            <i class="bi bi-check2-circle"></i>
+                            Save Changes
+                        </button>
+
+                        <a href="{% url 'profile' %}"
+                           class="edit-profile-cancel-btn">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input
-                type="email"
-                id="email"
-                name="email"
-                class="form-control"
-                value="{{ profile_user.email }}"
-                required
-            >
-        </div>
+        <p class="edit-profile-footer">
+            <i class="bi bi-shield-check"></i>
+            Your personal information is associated with your SpendWise account.
+        </p>
 
-        <button type="submit" class="btn btn-success">
-            Save Changes
-        </button>
-
-        <a href="{% url 'profile' %}" class="btn btn-secondary">
-            Cancel
-        </a>
-    </form>
+    </div>
 </div>
 {% endblock %}
