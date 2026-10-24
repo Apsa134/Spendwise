@@ -5,5 +5,5 @@ urlpatterns = [
     path('', views.transaction_list, name='transaction_list'),
     path('<int:pk>/edit/', views.edit_transaction, name='edit_transaction'),
     path('<int:pk>/delete/', views.delete_transaction, name='delete_transaction'),
-
+    path('export/csv/',views.export_transactions_csv,name='export_transactions_csv'),
 ]

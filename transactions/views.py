@@ -5,6 +5,8 @@ from .forms import TransactionForm
 from .models import Transaction
 from django.db.models import Q
 from django.core.paginator import Paginator
+import csv
+from django.http import HttpResponse
 
 @login_required
 def add_transaction(request):
@@ -138,3 +140,79 @@ def delete_transaction(request, pk):
         'transactions/delete_transaction.html',
         {'transaction': transaction}
     )
+
+
+@login_required
+def export_transactions_csv(request):
+    # Get only the logged-in user's transactions.
+    transactions = Transaction.objects.filter(
+        user=request.user
+    ).order_by('-date', '-created_at')
+
+    # Read the same filters used on the Transactions page.
+    search_query = request.GET.get('q', '').strip()
+    transaction_type = request.GET.get('type', '').strip()
+    category = request.GET.get('category', '').strip()
+    start_date = request.GET.get('start_date', '').strip()
+    end_date = request.GET.get('end_date', '').strip()
+
+    # Apply search.
+    if search_query:
+        transactions = transactions.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    # Apply transaction type filter.
+    if transaction_type in ('income', 'expense'):
+        transactions = transactions.filter(
+            transaction_type=transaction_type
+        )
+
+    # Apply category filter.
+    valid_categories = {
+        value for value, label
+        in Transaction._meta.get_field('category').choices
+    }
+
+    if category in valid_categories:
+        transactions = transactions.filter(category=category)
+
+    # Apply date filters.
+    if start_date:
+        transactions = transactions.filter(date__gte=start_date)
+
+    if end_date:
+        transactions = transactions.filter(date__lte=end_date)
+
+    # Create the CSV response.
+    response = HttpResponse(
+        content_type='text/csv; charset=utf-8'
+    )
+    response['Content-Disposition'] = (
+        'attachment; filename="spendwise_transactions.csv"'
+    )
+
+    # Write the CSV header and transaction rows.
+    writer = csv.writer(response)
+
+    writer.writerow([
+        'Title',
+        'Description',
+        'Category',
+        'Date',
+        'Type',
+        'Amount',
+    ])
+
+    for transaction in transactions:
+        writer.writerow([
+            transaction.title,
+            transaction.description,
+            transaction.get_category_display(),
+            transaction.date,
+            transaction.get_transaction_type_display(),
+            transaction.amount,
+        ])
+
+    return response
