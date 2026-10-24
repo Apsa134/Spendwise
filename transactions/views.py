@@ -1,33 +1,65 @@
+import csv
+import logging
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import TransactionForm
 from .models import Transaction
-from django.db.models import Q
-from django.core.paginator import Paginator
-import csv
-from django.http import HttpResponse
+from core.budget_email import check_budget_email
+
+logger = logging.getLogger(__name__)
+def check_budget_email_safely(user, category, date):
+    """
+    Check the budget and send an alert email if required.
+    Email failures should not interrupt transaction operations.
+    """
+    try:
+        check_budget_email(
+            user=user,
+            category=category,
+            month=date.month,
+            year=date.year,
+        )
+    except Exception:
+        logger.exception("Failed to send budget alert email.")
+
 
 @login_required
 def add_transaction(request):
     if request.method == 'POST':
         form = TransactionForm(request.POST)
+
         if form.is_valid():
             transaction = form.save(commit=False)
             transaction.user = request.user
             transaction.save()
+
+            # Check the budget after adding an expense.
+            if transaction.transaction_type == 'expense':
+                check_budget_email_safely(
+                    request.user,
+                    transaction.category,
+                    transaction.date,
+                )
+
             messages.success(
                 request,
                 'Transaction added successfully.'
             )
             return redirect('transaction_list')
+
     else:
         form = TransactionForm()
+
     return render(
         request,
         'transactions/add_transaction.html',
         {'form': form}
     )
+
 
 @login_required
 def transaction_list(request):
@@ -36,7 +68,7 @@ def transaction_list(request):
         user=request.user
     ).order_by('-date', '-created_at')
 
-    # Read filters from the URL query parameters.
+    # Read filters from URL query parameters.
     search_query = request.GET.get('q', '').strip()
     transaction_type = request.GET.get('type', '').strip()
     category = request.GET.get('category', '').strip()
@@ -63,17 +95,22 @@ def transaction_list(request):
     }
 
     if category in valid_categories:
-        transactions = transactions.filter(category=category)
+        transactions = transactions.filter(
+            category=category
+        )
 
     # Filter by date range.
     if start_date:
-        transactions = transactions.filter(date__gte=start_date)
+        transactions = transactions.filter(
+            date__gte=start_date
+        )
 
     if end_date:
-        transactions = transactions.filter(date__lte=end_date)
+        transactions = transactions.filter(
+            date__lte=end_date
+        )
 
     paginator = Paginator(transactions, 5)
-
     page_obj = paginator.get_page(request.GET.get('page'))
 
     context = {
@@ -96,7 +133,6 @@ def transaction_list(request):
     )
 
 
-
 @login_required
 def edit_transaction(request, pk):
     transaction = get_object_or_404(
@@ -106,19 +142,51 @@ def edit_transaction(request, pk):
     )
 
     if request.method == 'POST':
-        form = TransactionForm(request.POST, instance=transaction)
+        form = TransactionForm(
+            request.POST,
+            instance=transaction
+        )
 
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Transaction updated successfully.')
+            # Preserve the old values before updating.
+            old_category = transaction.category
+            old_date = transaction.date
+            old_type = transaction.transaction_type
+
+            transaction = form.save()
+
+            # Recheck the previous category/month.
+            if old_type == 'expense':
+                check_budget_email_safely(
+                    request.user,
+                    old_category,
+                    old_date,
+                )
+
+            # Recheck the updated category/month.
+            if transaction.transaction_type == 'expense':
+                check_budget_email_safely(
+                    request.user,
+                    transaction.category,
+                    transaction.date,
+                )
+
+            messages.success(
+                request,
+                'Transaction updated successfully.'
+            )
             return redirect('transaction_list')
+
     else:
         form = TransactionForm(instance=transaction)
 
     return render(
         request,
         'transactions/edit_transaction.html',
-        {'form': form, 'transaction': transaction}
+        {
+            'form': form,
+            'transaction': transaction,
+        }
     )
 
 
@@ -131,8 +199,25 @@ def delete_transaction(request, pk):
     )
 
     if request.method == 'POST':
+        # Preserve values before deleting the transaction.
+        old_category = transaction.category
+        old_date = transaction.date
+        old_type = transaction.transaction_type
+
         transaction.delete()
-        messages.success(request, 'Transaction deleted successfully.')
+
+        # Recheck spending for the affected budget.
+        if old_type == 'expense':
+            check_budget_email_safely(
+                request.user,
+                old_category,
+                old_date,
+            )
+
+        messages.success(
+            request,
+            'Transaction deleted successfully.'
+        )
         return redirect('transaction_list')
 
     return render(
@@ -176,14 +261,20 @@ def export_transactions_csv(request):
     }
 
     if category in valid_categories:
-        transactions = transactions.filter(category=category)
+        transactions = transactions.filter(
+            category=category
+        )
 
     # Apply date filters.
     if start_date:
-        transactions = transactions.filter(date__gte=start_date)
+        transactions = transactions.filter(
+            date__gte=start_date
+        )
 
     if end_date:
-        transactions = transactions.filter(date__lte=end_date)
+        transactions = transactions.filter(
+            date__lte=end_date
+        )
 
     # Create the CSV response.
     response = HttpResponse(
@@ -193,7 +284,7 @@ def export_transactions_csv(request):
         'attachment; filename="spendwise_transactions.csv"'
     )
 
-    # Write the CSV header and transaction rows.
+    # Write CSV header and transaction rows.
     writer = csv.writer(response)
 
     writer.writerow([
