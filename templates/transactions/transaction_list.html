@@ -1,128 +1,296 @@
+
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}My Transactions | SpendWise{% endblock %}
 
 {% block content %}
+<div class="container py-4">
 
-<section class="transaction-list-section">
-    <div class="container py-5">
-
-        <div class="d-flex flex-wrap justify-content-between
-                    align-items-center gap-3 mb-4">
-            <div>
-                <span class="section-label">MONEY MANAGEMENT</span>
-                <h1 class="mt-2">My Transactions</h1>
-                <p class="mb-0">
-                    Review your recorded income and expenses.
-                </p>
-            </div>
-
-            <a href="{% url 'add_transaction' %}"
-               class="btn btn-primary">
-                <i class="bi bi-plus-lg me-2"></i>
-                Add Transaction
-            </a>
+    <!-- Page Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h2 class="section-heading mb-1">My Transactions</h2>
+            <p class="text-muted mb-0">
+                View, search, and manage your income and expenses.
+            </p>
         </div>
 
-        <div class="transaction-table-card">
+        <a href="{% url 'add_transaction' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>
+            Add Transaction
+        </a>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <form method="GET" action="{% url 'transaction_list' %}">
+                <div class="row g-3">
+
+                    <!-- Search -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="search" class="form-label">Search</label>
+                        <input
+                            type="text"
+                            name="q"
+                            id="search"
+                            class="form-control"
+                            placeholder="Search title or description..."
+                            value="{{ search_query }}"
+                        >
+                    </div>
+
+                    <!-- Transaction Type -->
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <label for="type" class="form-label">Type</label>
+                        <select name="type" id="type" class="form-select">
+                            <option value="">All Types</option>
+                            <option value="income"
+                                {% if selected_type == 'income' %}selected{% endif %}>
+                                Income
+                            </option>
+                            <option value="expense"
+                                {% if selected_type == 'expense' %}selected{% endif %}>
+                                Expense
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <label for="category" class="form-label">Category</label>
+                        <select name="category" id="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for value, label in category_choices %}
+                                <option value="{{ value }}"
+                                    {% if selected_category == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Start Date -->
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <label for="start_date" class="form-label">From Date</label>
+                        <input
+                            type="date"
+                            name="start_date"
+                            id="start_date"
+                            class="form-control"
+                            value="{{ start_date }}"
+                        >
+                    </div>
+
+                    <!-- End Date -->
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <label for="end_date" class="form-label">To Date</label>
+                        <input
+                            type="date"
+                            name="end_date"
+                            id="end_date"
+                            class="form-control"
+                            value="{{ end_date }}"
+                        >
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-12 d-flex flex-wrap gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-funnel me-1"></i>
+                            Apply Filters
+                        </button>
+
+                        <a href="{% url 'transaction_list' %}"
+                           class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Clear Filters
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card transaction-table-card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="mb-0">Transaction History</h5>
+
+                <span class="text-muted small">
+                    {{ page_obj.paginator.count }}
+                    transaction{{ page_obj.paginator.count|pluralize }}
+                    found
+                </span>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
             {% if transactions %}
                 <div class="table-responsive">
                     <table class="table align-middle mb-0">
                         <thead>
                             <tr>
-                                <th>Transaction</th>
+                                <th class="ps-4">Transaction</th>
                                 <th>Category</th>
                                 <th>Date</th>
                                 <th>Type</th>
-                                <th class="text-end">Amount</th>    
-                                <th class="text-center actions-column">Actions</th>
-
-                                
+                                <th>Amount</th>
+                                <th class="text-end pe-4">Actions</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             {% for transaction in transactions %}
                                 <tr>
-                                    <td>
-                                        <strong>{{ transaction.title }}</strong>
+                                    <td class="ps-4">
+                                        <div class="fw-semibold">
+                                            {{ transaction.title }}
+                                        </div>
 
                                         {% if transaction.description %}
-                                            <div class="small text-muted">
-                                                {{ transaction.description|truncatechars:55 }}
-                                            </div>
+                                            <small class="text-muted">
+                                                {{ transaction.description|truncatechars:50 }}
+                                            </small>
                                         {% endif %}
                                     </td>
 
-                                    <td>{{ transaction.get_category_display }}</td>
+                                    <td>
+                                        {{ transaction.get_category_display }}
+                                    </td>
 
-                                    <td>{{ transaction.date|date:"d M Y" }}</td>
+                                    <td>
+                                        {{ transaction.date|date:"d M Y" }}
+                                    </td>
 
                                     <td>
                                         {% if transaction.transaction_type == 'income' %}
-                                            <span class="transaction-badge income-badge">
+                                            <span class="badge bg-success-subtle text-success">
+                                                <i class="bi bi-arrow-down-left me-1"></i>
                                                 Income
                                             </span>
                                         {% else %}
-                                            <span class="transaction-badge expense-badge">
+                                            <span class="badge bg-danger-subtle text-danger">
+                                                <i class="bi bi-arrow-up-right me-1"></i>
                                                 Expense
                                             </span>
                                         {% endif %}
                                     </td>
 
-                                    <td class="text-end fw-bold">
-                                        {% if transaction.transaction_type == 'income' %}
-                                            <span class="income-amount">
-                                                + ₹{{ transaction.amount|floatformat:2 }}
-                                            </span>
-                                        {% else %}
-                                            <span class="expense-amount">
-                                                − ₹{{ transaction.amount|floatformat:2 }}
-                                            </span>
-                                        {% endif %}
+                                    <td>
+                                        <span class="fw-semibold {% if transaction.transaction_type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                                            {% if transaction.transaction_type == 'income' %}+{% else %}-{% endif %}₹{{ transaction.amount|floatformat:2 }}
+                                        </span>
                                     </td>
-                                                                    
-                                    <td class="text-center">
-                                        <div class="transaction-actions">
+
+                                    <td class="text-end pe-4">
+                                        <div class="d-inline-flex gap-2">
                                             <a href="{% url 'edit_transaction' transaction.pk %}"
-                                            class="transaction-action-btn edit-action"
-                                            title="Edit transaction">
-                                                <i class="bi bi-pencil-square"></i>
-                                                <span>Edit</span>
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Edit transaction"
+                                               aria-label="Edit {{ transaction.title }}">
+                                                <i class="bi bi-pencil"></i>
                                             </a>
 
                                             <a href="{% url 'delete_transaction' transaction.pk %}"
-                                            class="transaction-action-btn delete-action"
-                                            title="Delete transaction">
+                                               class="btn btn-sm btn-outline-danger"
+                                               title="Delete transaction"
+                                               aria-label="Delete {{ transaction.title }}">
                                                 <i class="bi bi-trash"></i>
-                                                <span>Delete</span>
                                             </a>
                                         </div>
                                     </td>
-
-
-
                                 </tr>
-                                
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-            {% else %}
-                <div class="empty-transactions text-center">
-                    <i class="bi bi-receipt"></i>
-                    <h4>No transactions yet</h4>
-                    <p>Add your first income or expense to get started.</p>
 
-                    <a href="{% url 'add_transaction' %}"
-                       class="btn btn-primary">
-                        Add Your First Transaction
-                    </a>
+            {% else %}
+                <!-- Empty State -->
+                <div class="text-center py-5 px-3">
+                    <div class="mb-3">
+                        <i class="bi bi-receipt text-muted"
+                           style="font-size: 3rem;"></i>
+                    </div>
+
+                    <h5>No transactions found</h5>
+
+                    <p class="text-muted mb-3">
+                        {% if search_query or selected_type or selected_category or start_date or end_date %}
+                            Try changing your search or filters.
+                        {% else %}
+                            Start tracking your income and expenses by adding your first transaction.
+                        {% endif %}
+                    </p>
+
+                    {% if search_query or selected_type or selected_category or start_date or end_date %}
+                        <a href="{% url 'transaction_list' %}"
+                           class="btn btn-outline-primary">
+                            Clear Filters
+                        </a>
+                    {% else %}
+                        <a href="{% url 'add_transaction' %}"
+                           class="btn btn-primary">
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add Transaction
+                        </a>
+                    {% endif %}
                 </div>
             {% endif %}
         </div>
-
     </div>
-</section>
 
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+        <div class="pagination-container">
+
+            <div class="pagination-info">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+                <span>
+                    {{ page_obj.paginator.count }} total transactions
+                </span>
+            </div>
+
+            <nav class="pagination-controls" aria-label="Transaction pagination">
+
+                {% if page_obj.has_previous %}
+                    <a href="?q={{ search_query|urlencode }}&type={{ selected_type|urlencode }}&category={{ selected_category|urlencode }}&start_date={{ start_date|urlencode }}&end_date={{ end_date|urlencode }}&page={{ page_obj.previous_page_number }}"
+                       class="pagination-btn">
+                        <i class="bi bi-chevron-left"></i>
+                        Previous
+                    </a>
+                {% else %}
+                    <span class="pagination-btn disabled">
+                        <i class="bi bi-chevron-left"></i>
+                        Previous
+                    </span>
+                {% endif %}
+
+                <span class="pagination-current" aria-current="page">
+                    {{ page_obj.number }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?q={{ search_query|urlencode }}&type={{ selected_type|urlencode }}&category={{ selected_category|urlencode }}&start_date={{ start_date|urlencode }}&end_date={{ end_date|urlencode }}&page={{ page_obj.next_page_number }}"
+                       class="pagination-btn">
+                        Next
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                {% else %}
+                    <span class="pagination-btn disabled">
+                        Next
+                        <i class="bi bi-chevron-right"></i>
+                    </span>
+                {% endif %}
+
+            </nav>
+        </div>
+    {% endif %}
+
+</div>
 {% endblock %}
