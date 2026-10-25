@@ -9,6 +9,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import TransactionForm
 from .models import Transaction
 from core.budget_email import check_budget_email
+from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 logger = logging.getLogger(__name__)
 def check_budget_email_safely(user, category, date):
@@ -27,6 +29,8 @@ def check_budget_email_safely(user, category, date):
         logger.exception("Failed to send budget alert email.")
 
 
+
+
 @login_required
 def add_transaction(request):
     if request.method == 'POST':
@@ -37,12 +41,14 @@ def add_transaction(request):
             transaction.user = request.user
             transaction.save()
 
-            # Check the budget after adding an expense.
-            if transaction.transaction_type == 'expense':
+            if (
+                transaction.transaction_type == 'expense'
+                and transaction.status == 'completed'
+            ):
                 check_budget_email_safely(
                     request.user,
                     transaction.category,
-                    transaction.date,
+                    transaction.date
                 )
 
             messages.success(
@@ -133,6 +139,8 @@ def transaction_list(request):
     )
 
 
+
+
 @login_required
 def edit_transaction(request, pk):
     transaction = get_object_or_404(
@@ -141,34 +149,35 @@ def edit_transaction(request, pk):
         user=request.user
     )
 
+    old_category = transaction.category
+    old_date = transaction.date
+    old_type = transaction.transaction_type
+    old_status = transaction.status
+
     if request.method == 'POST':
-        form = TransactionForm(
-            request.POST,
-            instance=transaction
-        )
+        form = TransactionForm(request.POST, instance=transaction)
 
         if form.is_valid():
-            # Preserve the old values before updating.
-            old_category = transaction.category
-            old_date = transaction.date
-            old_type = transaction.transaction_type
+            updated_transaction = form.save()
 
-            transaction = form.save()
-
-            # Recheck the previous category/month.
-            if old_type == 'expense':
+            # Recheck the old budget if a completed expense was changed.
+            if old_type == 'expense' and old_status == 'completed':
                 check_budget_email_safely(
                     request.user,
                     old_category,
-                    old_date,
+                    old_date
                 )
 
-            # Recheck the updated category/month.
-            if transaction.transaction_type == 'expense':
+            # Check the updated budget if the transaction is now
+            # a completed expense.
+            if (
+                updated_transaction.transaction_type == 'expense'
+                and updated_transaction.status == 'completed'
+            ):
                 check_budget_email_safely(
                     request.user,
-                    transaction.category,
-                    transaction.date,
+                    updated_transaction.category,
+                    updated_transaction.date
                 )
 
             messages.success(
@@ -203,11 +212,15 @@ def delete_transaction(request, pk):
         old_category = transaction.category
         old_date = transaction.date
         old_type = transaction.transaction_type
+        old_status = transaction.status
 
         transaction.delete()
 
-        # Recheck spending for the affected budget.
-        if old_type == 'expense':
+        # Recheck the budget only for completed expenses.
+        if (
+            old_type == 'expense'
+            and old_status == 'completed'
+        ):
             check_budget_email_safely(
                 request.user,
                 old_category,
@@ -225,6 +238,7 @@ def delete_transaction(request, pk):
         'transactions/delete_transaction.html',
         {'transaction': transaction}
     )
+
 
 
 @login_required
@@ -307,3 +321,30 @@ def export_transactions_csv(request):
         ])
 
     return response
+
+@login_required
+@require_POST
+def complete_planned_transaction(request, pk):
+    transaction = get_object_or_404(
+        Transaction,
+        pk=pk,
+        user=request.user,
+        status='planned'
+    )
+
+    transaction.status = 'completed'
+    transaction.save(update_fields=['status', 'updated_at'])
+
+    if transaction.transaction_type == 'expense':
+        check_budget_email_safely(
+            request.user,
+            transaction.category,
+            transaction.date
+        )
+
+    messages.success(
+        request,
+        f'"{transaction.title}" has been marked as completed.'
+    )
+
+    return redirect('home')

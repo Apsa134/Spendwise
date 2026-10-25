@@ -1,11 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('income', 'Income'),
         ('expense', 'Expense'),
     ]
+    STATUS_CHOICES = [
+        ('planned', 'Planned'),
+        ('completed', 'Completed'),
+    ]
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='completed',
+    )
+
     CATEGORY_CHOICES = [
         ('salary', 'Salary'),
         ('food', 'Food'),
@@ -26,7 +37,8 @@ class Transaction(models.Model):
     title = models.CharField(max_length=100)
     amount = models.DecimalField(
         max_digits=12,
-        decimal_places=2
+        decimal_places=2,
+        validators=[MinValueValidator(0.01)]
     )
     transaction_type = models.CharField(
         max_length=10,

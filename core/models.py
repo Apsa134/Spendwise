@@ -35,3 +35,27 @@ class BudgetEmailAlert(models.Model):
             f'{self.user} - {self.category} - '
             f'{self.month}/{self.year} - {self.status}'
         )
+
+class MonthlySummaryEmail(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    month = models.PositiveSmallIntegerField()
+    year = models.PositiveSmallIntegerField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'month', 'year'],
+                name='unique_monthly_summary_email',
+            ),
+        ]
+        ordering = ['-year', '-month']
+
+    def __str__(self):
+        return (
+            f'{self.user} - Monthly Summary - '
+            f'{self.month}/{self.year}'
+        )

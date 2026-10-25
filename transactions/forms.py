@@ -10,6 +10,7 @@ class TransactionForm(forms.ModelForm):
             'transaction_type',
             'category',
             'date',
+            'status',
             'description',
         ]
         widgets = {
@@ -33,6 +34,9 @@ class TransactionForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'date',
             }),
+            'status': forms.Select(attrs={
+                'class': 'form-select'
+            }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Add optional notes',
@@ -46,3 +50,20 @@ class TransactionForm(forms.ModelForm):
                 'Amount must be greater than zero.'
             )
         return amount
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        transaction_date = cleaned_data.get('date')
+
+        if transaction_date:
+            from django.utils import timezone
+
+            today = timezone.localdate()
+
+            if transaction_date > today:
+                cleaned_data['status'] = 'planned'
+            else:
+                cleaned_data['status'] = 'completed'
+
+        return cleaned_data
