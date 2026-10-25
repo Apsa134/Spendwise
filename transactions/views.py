@@ -70,9 +70,12 @@ def add_transaction(request):
 @login_required
 def transaction_list(request):
     # Only show the logged-in user's transactions.
+    
     transactions = Transaction.objects.filter(
-        user=request.user
+        user=request.user,
+        status='completed'
     ).order_by('-date', '-created_at')
+
 
     # Read filters from URL query parameters.
     search_query = request.GET.get('q', '').strip()
