@@ -63,7 +63,26 @@ def home(request):
     )
 
     balance = total_income - total_expenses
+    # All-time planned income
+    planned_income = (
+        planned_transactions.filter(
+            transaction_type='income'
+        ).aggregate(total=Sum('amount'))['total']
+        or Decimal('0.00')
+    )
 
+    # All-time planned expenses
+    planned_expenses = (
+        planned_transactions.filter(
+            transaction_type='expense'
+        ).aggregate(total=Sum('amount'))['total']
+        or Decimal('0.00')
+    )
+
+    # Projected balance after all planned transactions
+    projected_balance = (
+        balance + planned_income - planned_expenses
+    )
     # Current month's completed transactions
     monthly_transactions = completed_transactions.filter(
         date__year=today.year,
@@ -220,6 +239,10 @@ def home(request):
         'total_expenses': total_expenses,
         'balance': balance,
 
+        'planned_income': planned_income,
+        'planned_expenses': planned_expenses,
+        'projected_balance': projected_balance,
+        
         'monthly_income': monthly_income,
         'monthly_expenses': monthly_expenses,
         'monthly_savings': monthly_savings,

@@ -5,6 +5,7 @@
 
 {% block content %}
 
+<!-- HERO SECTION -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center g-5">
@@ -58,15 +59,20 @@
                 </div>
             </div>
 
+            <!-- DASHBOARD PREVIEW -->
             <div class="col-lg-6">
                 <div class="dashboard-preview">
 
                     {% if user.is_authenticated %}
 
+                        <!-- CURRENT BALANCE -->
                         <div class="preview-header">
                             <div>
-                                <p class="preview-label">TOTAL BALANCE</p>
+                                <p class="preview-label">CURRENT BALANCE</p>
                                 <h2>₹{{ balance|floatformat:2 }}</h2>
+                                <small class="text-muted">
+                                    Based on completed transactions
+                                </small>
                             </div>
 
                             <span class="preview-icon">
@@ -74,31 +80,123 @@
                             </span>
                         </div>
 
-                        <div class="row g-3 mt-2">
-                            <div class="col-6">
-                                <div class="preview-stat income-stat">
-                                    <div class="stat-icon">
-                                        <i class="bi bi-arrow-down-left"></i>
-                                    </div>
-                                    <p>Income</p>
-                                    <h4>₹{{ total_income|floatformat:2 }}</h4>
+                        <!-- PROJECTED BALANCE -->
+                        <div class="rounded-4 p-3 mt-3"
+                             style="background: #e8f6ef;">
+                            <div class="d-flex justify-content-between
+                                        align-items-start gap-3">
+                                <div>
+                                    <p class="small text-muted mb-1">
+                                        PROJECTED BALANCE
+                                    </p>
+
+                                    <h3 class="mb-1"
+                                        style="color: #087f5b;">
+                                        ₹{{ projected_balance|floatformat:2 }}
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        After all planned transactions
+                                    </small>
                                 </div>
+
+                                <span class="preview-icon">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </span>
                             </div>
 
-                            <div class="col-6">
-                                <div class="preview-stat expense-stat">
-                                    <div class="stat-icon">
-                                        <i class="bi bi-arrow-up-right"></i>
+                            <div class="row g-2 mt-2">
+                                <div class="col-6">
+                                    <div class="bg-white rounded-3 p-2">
+                                        <small class="text-muted d-block">
+                                            Planned income
+                                        </small>
+                                        <strong class="text-success">
+                                            +₹{{ planned_income|floatformat:2 }}
+                                        </strong>
                                     </div>
-                                    <p>Expenses</p>
-                                    <h4>₹{{ total_expenses|floatformat:2 }}</h4>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="bg-white rounded-3 p-2">
+                                        <small class="text-muted d-block">
+                                            Planned expenses
+                                        </small>
+                                        <strong class="text-danger">
+                                            −₹{{ planned_expenses|floatformat:2 }}
+                                        </strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
+
+                        <!-- INCOME AND EXPENSES -->
+                        <div class="row g-3 mt-3">
+
+                            <!-- TOTAL INCOME CARD -->
+                            <div class="col-6">
+                                <div class="rounded-4 p-3 h-100"
+                                    style="background: #e8f6ef; border: 1px solid #d1eddf;">
+
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <span class="rounded-3 p-2"
+                                            style="background: #d1eddf; color: #087f5b;">
+                                            <i class="bi bi-arrow-down-left fs-5"></i>
+                                        </span>
+                                    </div>
+
+                                    <p class="small mb-1" style="color: #087f5b;">
+                                        Total Income
+                                    </p>
+
+                                    <h5 class="mb-0 fw-bold text-break"
+                                        style="color: #087f5b;">
+                                        ₹{{ total_income|floatformat:2 }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        Completed transactions
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- TOTAL EXPENSES CARD -->
+                            <div class="col-6">
+                                <div class="rounded-4 p-3 h-100"
+                                    style="background: #fff0eb; border: 1px solid #ffddd2;">
+
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <span class="rounded-3 p-2"
+                                            style="background: #ffddd2; color: #c2410c;">
+                                            <i class="bi bi-arrow-up-right fs-5"></i>
+                                        </span>
+                                    </div>
+
+                                    <p class="small mb-1" style="color: #c2410c;">
+                                        Total Expenses
+                                    </p>
+
+                                    <h5 class="mb-0 fw-bold text-break"
+                                        style="color: #c2410c;">
+                                        ₹{{ total_expenses|floatformat:2 }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        Completed transactions
+                                    </small>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <!-- RECENT ACTIVITY -->
                         <div class="preview-activity mt-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex justify-content-between
+                                        align-items-center mb-3">
                                 <h5 class="mb-0">Recent activity</h5>
+
                                 <a href="{% url 'transaction_list' %}"
                                    class="small text-decoration-none">
                                     View all
@@ -117,6 +215,7 @@
                                         {% else %}
                                             food-icon
                                         {% endif %}">
+
                                         {% if transaction.transaction_type == 'income' %}
                                             <i class="bi bi-cash-stack"></i>
                                         {% elif transaction.category == 'food' %}
@@ -161,9 +260,12 @@
 
                     {% else %}
 
+                        <!-- GUEST DASHBOARD PREVIEW -->
                         <div class="preview-header">
                             <div>
-                                <p class="preview-label">YOUR FINANCES, SIMPLIFIED</p>
+                                <p class="preview-label">
+                                    YOUR FINANCES, SIMPLIFIED
+                                </p>
                                 <h2>One place. Better control.</h2>
                             </div>
 
@@ -203,7 +305,9 @@
                                 </span>
                                 <div class="flex-grow-1">
                                     <h6>Record transactions</h6>
-                                    <small>Keep your finances organized</small>
+                                    <small>
+                                        Keep your finances organized
+                                    </small>
                                 </div>
                             </div>
 
@@ -213,7 +317,9 @@
                                 </span>
                                 <div class="flex-grow-1">
                                     <h6>Manage your budget</h6>
-                                    <small>Build better spending habits</small>
+                                    <small>
+                                        Build better spending habits
+                                    </small>
                                 </div>
                             </div>
 
@@ -223,7 +329,9 @@
                                 </span>
                                 <div class="flex-grow-1">
                                     <h6>Understand your spending</h6>
-                                    <small>Make informed decisions</small>
+                                    <small>
+                                        Make informed decisions
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -240,12 +348,12 @@
 
 {% if user.is_authenticated %}
 
-
 <!-- DUE-DATE REMINDERS -->
 <section class="container py-4">
     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
 
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center
+                    flex-wrap gap-3 mb-3">
             <div>
                 <span class="section-label">STAY ON TRACK</span>
                 <h4 class="mb-1">Due-Date Reminders</h4>
@@ -262,7 +370,8 @@
         {% if overdue_transactions or due_today_transactions %}
 
             {% for transaction in overdue_transactions %}
-                <div class="alert alert-danger d-flex justify-content-between align-items-center flex-wrap gap-3"
+                <div class="alert alert-danger d-flex justify-content-between
+                            align-items-center flex-wrap gap-3"
                      role="alert">
 
                     <div>
@@ -278,31 +387,48 @@
                         </div>
 
                         <div class="small mt-1">
-                            Please confirm whether this transaction has been completed.
+                            Please confirm whether this transaction
+                            has been completed.
                         </div>
                     </div>
 
                     <div class="text-end">
-                        <strong>₹{{ transaction.amount|floatformat:2 }}</strong>
+                        <strong>
+                            ₹{{ transaction.amount|floatformat:2 }}
+                        </strong>
 
                         <div class="mb-2">
                             <span class="badge bg-danger">Overdue</span>
                         </div>
 
-                        <form method="post"
-                              action="{% url 'complete_planned_transaction' transaction.pk %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-sm">
-                                <i class="bi bi-check-circle me-1"></i>
-                                Mark as Completed
-                            </button>
-                        </form>
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
+                            <a href="{% url 'edit_transaction' transaction.pk %}"
+                               class="btn btn-outline-dark btn-sm">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+
+                            <a href="{% url 'delete_transaction' transaction.pk %}"
+                               class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </a>
+
+                            <form method="post"
+                                  action="{% url 'complete_planned_transaction' transaction.pk %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn btn-success btn-sm">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Mark as Completed
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
 
             {% for transaction in due_today_transactions %}
-                <div class="alert alert-warning d-flex justify-content-between align-items-center flex-wrap gap-3"
+                <div class="alert alert-warning d-flex justify-content-between
+                            align-items-center flex-wrap gap-3"
                      role="alert">
 
                     <div>
@@ -322,20 +448,37 @@
                     </div>
 
                     <div class="text-end">
-                        <strong>₹{{ transaction.amount|floatformat:2 }}</strong>
+                        <strong>
+                            ₹{{ transaction.amount|floatformat:2 }}
+                        </strong>
 
                         <div class="mb-2">
-                            <span class="badge bg-warning text-dark">Due Today</span>
+                            <span class="badge bg-warning text-dark">
+                                Due Today
+                            </span>
                         </div>
 
-                        <form method="post"
-                              action="{% url 'complete_planned_transaction' transaction.pk %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-sm">
-                                <i class="bi bi-check-circle me-1"></i>
-                                Mark as Completed
-                            </button>
-                        </form>
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
+                            <a href="{% url 'edit_transaction' transaction.pk %}"
+                               class="btn btn-outline-dark btn-sm">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+
+                            <a href="{% url 'delete_transaction' transaction.pk %}"
+                               class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </a>
+
+                            <form method="post"
+                                  action="{% url 'complete_planned_transaction' transaction.pk %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn btn-success btn-sm">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Mark as Completed
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
@@ -353,11 +496,13 @@
     </div>
 </section>
 
+
 <!-- UPCOMING PLANNED TRANSACTIONS -->
 <section class="container py-4">
     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
 
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center
+                    flex-wrap gap-3 mb-3">
             <div>
                 <span class="section-label">PLAN AHEAD</span>
                 <h4 class="mb-1">Upcoming Planned Transactions</h4>
@@ -380,6 +525,7 @@
                             <th>Date</th>
                             <th>Type</th>
                             <th class="text-end">Amount</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
 
@@ -395,7 +541,9 @@
                                     </small>
                                 </td>
 
-                                <td>{{ transaction.date|date:"d M Y" }}</td>
+                                <td>
+                                    {{ transaction.date|date:"d M Y" }}
+                                </td>
 
                                 <td>
                                     {% if transaction.transaction_type == 'income' %}
@@ -413,6 +561,20 @@
 
                                 <td class="text-end fw-semibold">
                                     ₹{{ transaction.amount|floatformat:2 }}
+                                </td>
+
+                                <td>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{% url 'edit_transaction' transaction.pk %}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-pencil me-1"></i>Edit
+                                        </a>
+
+                                        <a href="{% url 'delete_transaction' transaction.pk %}"
+                                           class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash me-1"></i>Delete
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -450,7 +612,8 @@
 
         {% for alert in budget_alerts %}
             {% if alert.status == 'exceeded' %}
-                <div class="alert alert-danger d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3"
+                <div class="alert alert-danger d-flex justify-content-between
+                            align-items-center flex-wrap gap-3 mb-3"
                      role="alert">
                     <div>
                         <h6 class="mb-1">
@@ -463,12 +626,14 @@
                             Overspent by ₹{{ alert.overspent|floatformat:2 }}.
                         </p>
                     </div>
+
                     <span class="badge bg-danger fs-6">
                         {{ alert.percentage|floatformat:0 }}% used
                     </span>
                 </div>
             {% else %}
-                <div class="alert alert-warning d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3"
+                <div class="alert alert-warning d-flex justify-content-between
+                            align-items-center flex-wrap gap-3 mb-3"
                      role="alert">
                     <div>
                         <h6 class="mb-1">
@@ -481,6 +646,7 @@
                             ₹{{ alert.remaining|floatformat:2 }} remaining.
                         </p>
                     </div>
+
                     <span class="badge bg-warning text-dark fs-6">
                         {{ alert.percentage|floatformat:0 }}% used
                     </span>
@@ -497,7 +663,8 @@
                 <div>
                     <h6 class="mb-1">Your budgets are on track</h6>
                     <p class="text-muted mb-0">
-                        No budget warnings right now. Keep monitoring your spending!
+                        No budget warnings right now.
+                        Keep monitoring your spending!
                     </p>
                 </div>
             </div>
@@ -549,10 +716,12 @@
             </div>
         </div>
 
+        <!-- CHARTS -->
         <div class="row g-4 mt-3">
             <div class="col-lg-6">
                 <div class="feature-card h-100">
                     <h5>Expenses by Category</h5>
+
                     <div style="max-width: 380px; margin: 20px auto;">
                         <canvas id="categoryChart"></canvas>
                     </div>
@@ -568,6 +737,7 @@
             <div class="col-lg-6">
                 <div class="feature-card h-100">
                     <h5>Income vs Expenses</h5>
+
                     <div style="margin-top: 20px;">
                         <canvas id="monthlyChart"></canvas>
                     </div>
@@ -609,8 +779,10 @@
         document.getElementById('expense-values-data').textContent
     );
 
-    if (categoryLabels.length > 0) {
-        new Chart(document.getElementById('categoryChart'), {
+    const categoryCanvas = document.getElementById('categoryChart');
+
+    if (categoryCanvas && categoryLabels.length > 0) {
+        new Chart(categoryCanvas, {
             type: 'doughnut',
             data: {
                 labels: categoryLabels,
@@ -630,36 +802,41 @@
         });
     }
 
-    new Chart(document.getElementById('monthlyChart'), {
-        type: 'bar',
-        data: {
-            labels: monthLabels,
-            datasets: [
-                {
-                    label: 'Income',
-                    data: incomeValues
-                },
-                {
-                    label: 'Expenses',
-                    data: expenseValues
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+    const monthlyCanvas = document.getElementById('monthlyChart');
+
+    if (monthlyCanvas) {
+        new Chart(monthlyCanvas, {
+            type: 'bar',
+            data: {
+                labels: monthLabels,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: incomeValues
+                    },
+                    {
+                        label: 'Expenses',
+                        data: expenseValues
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 </script>
 
 
 <!-- MONTHLY FINANCIAL REPORT -->
 <div class="container py-4">
     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+
         <div class="d-flex align-items-center gap-3 mb-3">
             <div class="rounded-3 p-3"
                  style="background: #e8f6ef; color: #087f5b;">
@@ -683,6 +860,7 @@
                     <label for="report-month" class="form-label">
                         Select Month
                     </label>
+
                     <select name="month" id="report-month"
                             class="form-select" required>
                         {% for value, label in month_choices %}
@@ -698,6 +876,7 @@
                     <label for="report-year" class="form-label">
                         Select Year
                     </label>
+
                     <select name="year" id="report-year"
                             class="form-select" required>
                         {% for year in report_years %}
@@ -792,6 +971,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 
