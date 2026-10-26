@@ -128,6 +128,7 @@ class Command(BaseCommand):
             user=user,
             date__month=month,
             date__year=year,
+            status='completed',
         )
 
         income = transactions.filter(

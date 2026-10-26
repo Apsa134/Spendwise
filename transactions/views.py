@@ -244,6 +244,7 @@ def delete_transaction(request, pk):
 
 
 
+
 @login_required
 def export_transactions_csv(request):
     # Get only the logged-in user's transactions.
@@ -311,6 +312,7 @@ def export_transactions_csv(request):
         'Date',
         'Type',
         'Amount',
+        'Status',
     ])
 
     for transaction in transactions:
@@ -321,10 +323,10 @@ def export_transactions_csv(request):
             transaction.date,
             transaction.get_transaction_type_display(),
             transaction.amount,
+            transaction.get_status_display(),
         ])
 
     return response
-
 @login_required
 @require_POST
 def complete_planned_transaction(request, pk):

@@ -26,6 +26,7 @@ def budget_list(request):
     expenses = Transaction.objects.filter(
         user=request.user,
         transaction_type='expense',
+        status='completed',
         date__month=month,
         date__year=year,
     )
