@@ -35,7 +35,9 @@ def register(request):
                         'Account created successfully! '
                         'A welcome email has been sent.'
                     )
-                except Exception:
+                except Exception as e:
+                    print("EMAIL SENDING ERROR:", repr(e))
+
                     messages.warning(
                         request,
                         'Account created successfully, but the welcome '

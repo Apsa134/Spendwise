@@ -260,4 +260,5 @@ class Command(BaseCommand):
             to_email=user.email,
             subject=f'Your SpendWise Summary - {month_name} {year}',
             html_content=html_content,
+            
         )
