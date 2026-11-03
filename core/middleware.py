@@ -1,3 +1,5 @@
+# preventing reload
+
 class NoCacheMiddleware:
 
     def __init__(self, get_response):
